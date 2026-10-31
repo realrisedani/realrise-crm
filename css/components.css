@@ -68,7 +68,8 @@ svg.ico{width:16px;height:16px;flex:none}
 .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
 .ring circle{fill:none;stroke-width:15}
 .ring__track{stroke:var(--well)}
-.ring__arc{stroke:var(--lime);stroke-linecap:round;transition:stroke-dashoffset 1.1s var(--ease)}
+.ring__arc{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset 1.1s var(--ease)}
+.ring__arc--lime{stroke:var(--lime)}
 .ring__arc--sky{stroke:var(--sky)}.ring__arc--coral{stroke:var(--coral)}.ring__arc--good{stroke:var(--good)}
 .ring__mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
 .ring__mid b{font-size:38px;font-weight:600;letter-spacing:-.03em;line-height:1}

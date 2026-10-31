@@ -163,7 +163,7 @@ RR.seed = (function () {
   return function build() {
     return {
       v: 1, team, customers, deals, tasks, invoices, projects, activity, notifications,
-      settings: { theme: 'dark', accent: 'lime', weekStart: 'mon', alerts: { deals: true, tasks: true, invoices: false, digest: true }, pipelineView: 'board', customersView: 'grid' },
+      settings: { theme: 'dark', accent: 'coral', weekStart: 'mon', alerts: { deals: true, tasks: true, invoices: false, digest: true }, pipelineView: 'board', customersView: 'grid' },
     };
   };
 })();

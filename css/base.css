@@ -102,6 +102,7 @@ header.top{display:grid;grid-template-columns:auto 1fr auto;align-items:center;g
 .card__sub{font-size:12.5px;color:var(--muted)}
 .card__tools{margin-left:auto;display:flex;align-items:center;gap:8px}
 .card--lime{background:color-mix(in srgb,var(--lime) var(--tint),var(--glass))}
+.card--accent{background:color-mix(in srgb,var(--accent) var(--tint),var(--glass))}
 .card--sky{background:color-mix(in srgb,var(--sky) var(--tint),var(--glass))}
 .card--coral{background:color-mix(in srgb,var(--coral) var(--tint),var(--glass))}
 .big{font-size:42px;line-height:1;font-weight:600;letter-spacing:-.03em}
