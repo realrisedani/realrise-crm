@@ -1,0 +1,60 @@
+/* RealRise CRM – Design-Tokens (aus dem Solvik-Audit, Werte 1:1) */
+:root{
+  --font:"Urbanist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+
+  --bg:#111513;
+  --wash:linear-gradient(180deg,#080b0a80,#080b0a6b 45%,#080b0a8c);
+  --on-photo-muted:#dde1da;
+  --glass:#14171775; --glass-2:#ffffff14; --glass-3:#1e2322; --glass-tile:#16191985;
+  --tint:30%; --ring-tile:#2b302e; --solid:#1a1e1d; --float:#1f2423;
+  --well:#ffffff12; --line:#ffffff1a; --line-2:#ffffff2e; --rim:#ffffff26;
+  --blur:blur(22px) saturate(150%);
+  --shadow:inset 0 1px 0 #ffffff1f,0 30px 60px -30px #0009;
+  --shadow-pop:0 24px 60px -18px #000000b3,0 0 0 1px #ffffff1a;
+  --scrim:rgba(0,0,0,.55);
+
+  --text:#f2f4f0; --muted:#c2c7c1; --faint:#9ca29c; --cream:#f6f7f3;
+  --sky:#8cc4ff; --on-sky:#13171a;
+  --lime:#cdf06a; --on-lime:#13171a;
+  --coral:#ff9a7c; --on-coral:#13171a;
+  --ink:#f2f4f0; --on-ink:#13171a;
+  --plain:#ffffff12; --on-plain:#f2f4f0;
+  --good:#b8e65a; --bad:#ff9a7c;
+  --accent:#c4ef4f; --on-accent:#13171a; --accent-text:#cdf06a;
+  --accent-glow:rgba(120,160,20,.7);
+  --dock:#16191980; --on-dock:#f2f4f0;
+  --pill:#585e5dbd; --on-pill:#f2f4f0;
+
+  --av0:#e2efbd; --av1:#cde4f6; --av2:#f7d3c6; --av3:#e9e2cf; --on-av:#13171a;
+
+  --r-card:22px; --r-tile:18px; --r-ctl:999px; --r-modal:26px; --r-drawer:28px; --r-pop:18px; --r-field:14px;
+  --gap:16px; --dock-x:20px; --dock-w:60px; --gutter:clamp(16px,1.6vw,28px); --app-max:1840px;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  color-scheme:dark;
+}
+
+:root[data-theme="light"]{
+  --bg:#e9ece7;
+  --wash:linear-gradient(180deg,#f0f3eea8,#f0f3ee99 45%,#ecefe9b3);
+  --on-photo-muted:#353b37;
+  --glass:#ffffff80; --glass-2:#ffffff94; --glass-3:#ffffffdb; --glass-tile:#ffffff80;
+  --tint:46%; --ring-tile:#f4f6f2; --solid:#f4f6f2; --float:#f8faf6;
+  --well:#1216140f; --line:#1216141a; --line-2:#1216142e; --rim:#ffffffb8;
+  --shadow:inset 0 1px 0 #fffc,0 24px 50px -32px #141e1466;
+  --shadow-pop:0 24px 60px -18px #0f191459,0 2px 6px #0f191414;
+  --scrim:rgba(12,18,14,.32);
+  --text:#13171a; --muted:#4b524e; --faint:#575e59;
+  --sky:#5aa6ec; --lime:#a9d636; --coral:#f27d5f;
+  --ink:#13171a; --on-ink:#f6f7f3;
+  --plain:#ffffff94; --on-plain:#13171a;
+  --good:#3c7a14; --bad:#b8401f;
+  --accent-text:#3f6410; --accent-glow:rgba(100,140,20,.45);
+  --dock:#ffffff8c; --on-dock:#13171a;
+  --pill:#13171a; --on-pill:#f6f7f3;
+  color-scheme:light;
+}
+
+/* Akzent-Variante RealRise Coral */
+:root[data-accent="coral"]{ --accent:#d97757; --on-accent:#fff7f2; --accent-text:#ff9a7c; --accent-glow:rgba(217,119,87,.55); }
+:root[data-accent="coral"][data-theme="light"]{ --accent-text:#a7472a; }

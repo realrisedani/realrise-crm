@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RealRise CRM</title>
+<meta name="description" content="RealRise CRM – Prototyp: Pipeline, Kunden, Kalender, Finanzen, Growth, Onboarding.">
+<meta name="color-scheme" content="dark light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/views.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23c4ef4f'/%3E%3Ccircle cx='32' cy='36' r='11' fill='none' stroke='%2313171a' stroke-width='5'/%3E%3Cpath d='M32 12v6M14 20l4 4M50 20l-4 4M12 52h40' stroke='%2313171a' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+  /* Nach dem ersten Rendern keine Einflug-Animationen mehr (Live-Updates) */
+  .view[data-entered] .head__title .ch,.view[data-entered] .card,.view[data-entered] .stat,.view[data-entered] .table tbody tr,.view[data-entered] .pl-col{animation:none}
+  .view[data-entered] .chart__line.draw{animation:none;stroke-dashoffset:0}
+</style>
+<script>
+  (function(){try{var s=JSON.parse(localStorage.getItem('rr-crm:v1')||'null');var t=s&&s.settings&&s.settings.theme||'dark';if(t==='system')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=t;if(s&&s.settings&&s.settings.accent)document.documentElement.dataset.accent=s.settings.accent;}catch(e){}})();
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Zum Inhalt springen</a>
+<div class="backdrop" aria-hidden="true"></div>
+
+<div class="app">
+  <header class="top">
+    <a class="brand" href="#/overview" aria-label="RealRise CRM – Übersicht">
+      <span class="brand__mark" aria-hidden="true"></span>
+      <span class="brand__name">realrise</span>
+    </a>
+    <nav class="tabs" aria-label="Hauptnavigation">
+      <div class="tabs__track">
+        <a class="tab" href="#/overview" data-route="overview">Übersicht</a>
+        <a class="tab" href="#/pipeline" data-route="pipeline">Pipeline</a>
+        <a class="tab" href="#/customers" data-route="customers">Kunden</a>
+        <a class="tab" href="#/schedule" data-route="schedule">Kalender</a>
+        <a class="tab" href="#/finance" data-route="finance">Finanzen</a>
+        <a class="tab" href="#/growth" data-route="growth">Growth</a>
+        <a class="tab" href="#/projects" data-route="projects">Onboarding</a>
+        <span class="tabs__pill" aria-hidden="true"></span>
+      </div>
+    </nav>
+    <div class="top__tools" id="top-tools"></div>
+  </header>
+
+  <main class="main" id="main" tabindex="-1">
+    <section class="view" data-view="overview" hidden></section>
+    <section class="view" data-view="pipeline" hidden></section>
+    <section class="view" data-view="customers" hidden></section>
+    <section class="view" data-view="schedule" hidden></section>
+    <section class="view" data-view="finance" hidden></section>
+    <section class="view" data-view="growth" hidden></section>
+    <section class="view" data-view="projects" hidden></section>
+    <section class="view" data-view="settings" hidden></section>
+  </main>
+</div>
+
+<nav class="dock" id="dock" aria-label="Schnellaktionen"></nav>
+
+<dialog class="finder" id="finder" aria-label="Suche"></dialog>
+<dialog class="modal" id="modal"></dialog>
+<dialog class="drawer" id="drawer"></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/seed.js"></script>
+<script src="js/store.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/views/overview.js"></script>
+<script src="js/views/pipeline.js"></script>
+<script src="js/views/customers.js"></script>
+<script src="js/views/schedule.js"></script>
+<script src="js/views/finance.js"></script>
+<script src="js/views/growth.js"></script>
+<script src="js/views/projects.js"></script>
+<script src="js/views/settings.js"></script>
+<script src="js/app.js"></script>
+<script>RR.app.start();</script>
+</body>
+</html>
