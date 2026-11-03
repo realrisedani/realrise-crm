@@ -40,6 +40,8 @@ js/store.js           Zustand, Persistenz, Mutationen, KPI-Formeln
 js/ui.js              Formatierung, Icons, Komponenten, SVG-Charts, Overlays
 js/app.js             Router, Header, Dock, globale Formulare, Shortcuts
 js/views/*.js         Eine Datei pro View
+docs/                 Bauplan und Funktionsplan aus dem Vorlagen-Audit
+UEBERGABE-ROBERT.md   Übergabe an Robert
 ```
 
 ## RealRise-Mapping

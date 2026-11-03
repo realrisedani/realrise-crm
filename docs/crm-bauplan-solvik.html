@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRM Bauplan Solvik</title>
+<meta name="description" content="Vollständiger Design- und Funktionsplan zum Nachbau eines CRM im Stil der Solvik-Demo (Glas-Dashboard, Pipeline, Kunden, Schedule, Finance, Growth, Projekte).">
+<style>
+  :root{
+    --bg:#111513; --card:#1a1e1d; --card2:#1f2423; --line:rgba(255,255,255,.12); --line2:rgba(255,255,255,.22);
+    --text:#f2f4f0; --muted:#c2c7c1; --faint:#aab0aa;
+    --lime:#cdf06a; --accent:#c4ef4f; --accent-text:#cdf06a; --sky:#8cc4ff; --coral:#ff9a7c; --on:#13171a;
+    --pill-on:rgba(88,94,93,.74); --on-pill:#f2f4f0;
+    --r:22px; --r2:18px; --ease:cubic-bezier(.2,.8,.2,1);
+    --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  :root[data-theme="light"]{ --bg:#e9ece7; --card:#f4f6f2; --card2:#ffffff; --line:rgba(18,22,20,.12); --line2:rgba(18,22,20,.22); --text:#13171a; --muted:#4b524e; --faint:#575e59; --lime:#a9d636; --accent-text:#3f6410; --sky:#5aa6ec; --coral:#f27d5f; --pill-on:#13171a; --on-pill:#f6f7f3; }
+  @media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){ --bg:#e9ece7; --card:#f4f6f2; --card2:#ffffff; --line:rgba(18,22,20,.12); --line2:rgba(18,22,20,.22); --text:#13171a; --muted:#4b524e; --faint:#575e59; --lime:#a9d636; --accent-text:#3f6410; --sky:#5aa6ec; --coral:#f27d5f; --pill-on:#13171a; --on-pill:#f6f7f3; } }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--text);font:500 15px/1.55 "Urbanist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;}
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 16px 120px}
+  header.hero{padding:24px 0 8px}
+  .kicker{font:600 13px/1.4 var(--mono);color:var(--muted)}
+  h1{font-size:clamp(32px,5vw,52px);line-height:1.02;letter-spacing:-.03em;font-weight:600;margin:12px 0 10px}
+  h2{font-size:26px;letter-spacing:-.02em;font-weight:600;margin:56px 0 14px;padding-top:24px;border-top:1px solid var(--line)}
+  h3{font-size:17px;font-weight:600;margin:26px 0 8px}
+  h4{font-size:14px;font-weight:600;margin:16px 0 6px;color:var(--muted)}
+  p{margin:8px 0;color:var(--muted)}
+  p.lead{font-size:17px;color:var(--text)}
+  a{color:var(--sky)}
+  code{font:500 13px/1.4 var(--mono);background:rgba(127,127,127,.14);padding:2px 6px;border-radius:6px;color:var(--text)}
+  pre{font:500 12.5px/1.55 var(--mono);background:var(--card);border:1px solid var(--line);border-radius:var(--r2);padding:16px 18px;overflow:auto;color:var(--text)}
+  pre code{background:none;padding:0}
+  table{width:100%;border-collapse:collapse;margin:10px 0 18px;font-size:14px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12px;color:var(--muted);font-weight:600}
+  td:first-child{white-space:nowrap}
+  .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+  .card h3{margin-top:0}
+  .sw{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:6px;border:1px solid var(--line2)}
+  .tag{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--lime);color:var(--on);margin-right:6px}
+  .tag.sky{background:var(--sky)} .tag.coral{background:var(--coral)} .tag.ink{background:var(--text);color:var(--bg)}
+  ul{margin:6px 0 10px;padding-left:20px;color:var(--muted)} li{margin:4px 0} li b{color:var(--text)}
+  ol{color:var(--muted)} ol li{margin:6px 0}
+  .toc{display:grid;gap:6px 18px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:22px 0 0}
+  .toc a{text-decoration:none;color:var(--text);font-size:14px}
+  .toc a span{color:var(--faint);font:600 12px var(--mono);margin-right:8px}
+  .note{padding:10px 14px;background:rgba(255,154,124,.08);border:1px solid var(--line);border-radius:12px;margin:14px 0}
+  .ok{background:rgba(205,240,106,.08)}
+  .wire{font:500 12px/1.35 var(--mono);white-space:pre;background:var(--card2);border:1px dashed var(--line2);border-radius:var(--r2);padding:14px 16px;overflow:auto;color:var(--text)}
+  kbd{font:600 12px var(--mono);border:1px solid var(--line2);border-bottom-width:2px;border-radius:6px;padding:1px 6px;background:var(--card2)}
+  .pill-demo{display:inline-flex;gap:2px;padding:4px;border-radius:999px;background:rgba(127,127,127,.18);border:1px solid var(--line)}
+  .pill-demo span{padding:8px 16px;border-radius:999px;font-size:13.5px;font-weight:600;color:var(--text)}
+  .pill-demo span.on{background:var(--pill-on);color:var(--on-pill);box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+  .btn-demo{display:inline-flex;align-items:center;height:34px;padding:0 14px;border-radius:999px;background:var(--accent);color:var(--on);font-size:12.5px;font-weight:600;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 10px 24px -14px rgba(120,160,20,.7)}
+  .av-demo{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;font:700 12px var(--mono);color:#13171a;box-shadow:0 0 0 2px var(--card)}
+  @media (max-width:760px){ h2{margin-top:40px} td:first-child{white-space:normal} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="kicker">RealRise / Bauplan &amp; Funktionsplan</div>
+  <h1>CRM im Solvik-Stil<br>komplett nachbauen</h1>
+  <p class="lead">Ergebnis eines vollständigen Klick-Audits der Demo <code>demo.codeandchill.store/solvik</code> (31.10.2026): alle 8 Views, 4 Drawer, 6 Modals, 7 Menüs, Dock, Header, Light/Dark, Mobile. Dieses Dokument beschreibt Design-System, Seitenaufbau, Komponenten, Interaktionen, Datenmodell und eine Bau-Reihenfolge, damit du das Ganze selbst (und auf RealRise angepasst) implementieren kannst.</p>
+  <div class="note">Die Demo ist ein kostenpflichtiges Template. Dieser Plan beschreibt <b>Aufbau, Verhalten und Design-Werte</b> zum Nachbau in eigenem Code. Vendor-Assets (Hintergrundfoto, Bundle-CSS/JS) nicht kopieren, sondern eigene erstellen.</div>
+  <nav class="toc">
+    <a href="#s1"><span>01</span>Überblick &amp; Architektur</a>
+    <a href="#s2"><span>02</span>Design-System (Tokens)</a>
+    <a href="#s3"><span>03</span>Layout-Shell: Header, Tabs, Dock</a>
+    <a href="#s4"><span>04</span>Komponenten-Bibliothek</a>
+    <a href="#s5"><span>05</span>View: Overview</a>
+    <a href="#s6"><span>06</span>View: Pipeline</a>
+    <a href="#s7"><span>07</span>View: Customers + Profil</a>
+    <a href="#s8"><span>08</span>View: Schedule</a>
+    <a href="#s9"><span>09</span>View: Finance + Rechnung</a>
+    <a href="#s10"><span>10</span>View: Growth</a>
+    <a href="#s11"><span>11</span>View: Projects + Drawer</a>
+    <a href="#s12"><span>12</span>View: Settings</a>
+    <a href="#s13"><span>13</span>Globale Funktionen (Dock, Suche, Menüs)</a>
+    <a href="#s14"><span>14</span>Datenmodell</a>
+    <a href="#s15"><span>15</span>Interaktion, Motion, Responsive, A11y</a>
+    <a href="#s16"><span>16</span>Bau-Reihenfolge &amp; RealRise-Mapping</a>
+  </nav>
+</header>
+
+<!-- 01 -->
+<h2 id="s1">01 · Überblick &amp; Architektur</h2>
+<div class="grid">
+  <div class="card"><h3>Was es ist</h3><p>Single-Page-App mit Hash-Router (<code>#/overview</code>, <code>#/pipeline/d10</code> …). Alle Views liegen als <code>&lt;section class="view" data-view="…"&gt;</code> im DOM, inaktive sind <code>hidden</code> und werden lazy gerendert. Detail-Routen öffnen einen rechten Drawer über der Liste.</p></div>
+  <div class="card"><h3>Tech der Demo</h3><p>Vite-Build, Vanilla-JS/DOM, eine Google-Font (Urbanist 400–700), eine globale CSS plus eine CSS pro View. Charts sind handgebaute Inline-SVGs. Alle Daten liegen im Browser (localStorage, ~60 KB JSON) mit Export/Reset.</p></div>
+  <div class="card"><h3>Visuelle Idee</h3><p>Ein fixes, unscharfes Foto als Backdrop, darüber ein dunkler Scrim (55 %). Alles andere sind „Glas“-Karten: halbtransparent, 1-px-Rim, Inset-Highlight oben, weicher Drop-Shadow, Radius 22 px. Akzent ist Lime, Stage-Farben Sky/Lime/Coral/Ink ziehen sich durch alles.</p></div>
+  <div class="card"><h3>Navigation</h3><p>Oben: Brand, 7 Tabs in einer Pill-Leiste, rechts Activity / Notifications / Account. Links: vertikales Dock mit 10 Quick-Actions. Mobile: Tabs werden horizontal scrollbar, Dock wandert als Bottom-Bar nach unten.</p></div>
+</div>
+
+<h3>Routen-Karte</h3>
+<table>
+<tr><th>Route</th><th>View</th><th>Öffnet</th></tr>
+<tr><td><code>#/overview</code></td><td>Sales Overview</td><td>Dashboard, 7 Karten</td></tr>
+<tr><td><code>#/pipeline</code> · <code>#/pipeline/:dealId</code></td><td>Deal Pipeline</td><td>Board/List · Deal-Drawer</td></tr>
+<tr><td><code>#/customers</code> · <code>#/customers/:slug</code></td><td>Customer Directory</td><td>Grid/Table · Kundenprofil (eigene Vollseite, kein Drawer)</td></tr>
+<tr><td><code>#/schedule</code></td><td>Team Schedule</td><td>Monat/Woche + Agenda</td></tr>
+<tr><td><code>#/finance</code> · <code>#/finance/:invoiceId</code></td><td>Revenue &amp; Invoices</td><td>Cash-flow, Aging, Tabelle · Rechnungs-Drawer</td></tr>
+<tr><td><code>#/growth</code></td><td>Growth Reports</td><td>6 Report-Karten</td></tr>
+<tr><td><code>#/projects</code> · <code>#/projects/:id</code></td><td>Customer Projects</td><td>Karten-Grid · Projekt-Drawer mit Checkliste</td></tr>
+<tr><td><code>#/settings</code> · <code>/team</code> · <code>/notifications</code> · <code>/appearance</code> · <code>/data</code></td><td>Workspace Settings</td><td>Profil-Spalte + Tab-Panel</td></tr>
+</table>
+
+<!-- 02 -->
+<h2 id="s2">02 · Design-System (Tokens)</h2>
+<p>Alle Werte 1:1 aus den CSS-Custom-Properties der Demo ausgelesen. Dark ist das Default-Theme, Light wird per <code>:root[data-theme="light"]</code> überschrieben; „System“ folgt <code>prefers-color-scheme</code>.</p>
+
+<h3>Farben</h3>
+<table>
+<tr><th>Token</th><th>Dark</th><th>Light</th><th>Einsatz</th></tr>
+<tr><td><code>--bg</code></td><td><span class="sw" style="background:#111513"></span>#111513</td><td><span class="sw" style="background:#e9ece7"></span>#e9ece7</td><td>Body-Fallback hinter dem Foto</td></tr>
+<tr><td><code>--text</code> / <code>--muted</code> / <code>--faint</code></td><td>#f2f4f0 / #c2c7c1 / #9ca29c</td><td>#13171a / #4b524e / #575e59</td><td>Text-Hierarchie (3 Stufen)</td></tr>
+<tr><td><code>--glass</code></td><td>#14171775 (46 %)</td><td>#ffffff80</td><td>Karten-Hintergrund</td></tr>
+<tr><td><code>--glass-2</code> / <code>--glass-3</code></td><td>#ffffff14 / #1e2322</td><td>#ffffff94 / #ffffffdb</td><td>Hover-Fläche / Modal, Drawer, Finder (opak)</td></tr>
+<tr><td><code>--solid</code> / <code>--float</code></td><td>#1a1e1d / #1f2423</td><td>#f4f6f2 / #f8faf6</td><td>Opake Flächen, Popover</td></tr>
+<tr><td><code>--well</code></td><td>#ffffff12</td><td>#1216140f</td><td>Inputs, Icon-Buttons, Stat-Icon-Kreise</td></tr>
+<tr><td><code>--line</code> / <code>--line-2</code> / <code>--rim</code></td><td>#ffffff1a / #ffffff2e / #ffffff26</td><td>#1216141a / #1216142e / #ffffffb8</td><td>Trenner, Borders, oberer Glanz-Rand</td></tr>
+<tr><td><code>--accent</code> / <code>--on-accent</code></td><td><span class="sw" style="background:#c4ef4f"></span>#c4ef4f / #13171a</td><td>gleich</td><td>Primär-Button, Brand-Mark, Ring</td></tr>
+<tr><td><code>--accent-text</code></td><td>#cdf06a</td><td>#3f6410</td><td>Lime als Text (Kontrast!)</td></tr>
+<tr><td><code>--sky</code></td><td><span class="sw" style="background:#8cc4ff"></span>#8cc4ff</td><td><span class="sw" style="background:#5aa6ec"></span>#5aa6ec</td><td>Stage „Qualification“, Kundentyp SMB-Bar</td></tr>
+<tr><td><code>--lime</code></td><td><span class="sw" style="background:#cdf06a"></span>#cdf06a</td><td><span class="sw" style="background:#a9d636"></span>#a9d636</td><td>Stage „Proposal“, Won, Paid, positive Werte</td></tr>
+<tr><td><code>--coral</code></td><td><span class="sw" style="background:#ff9a7c"></span>#ff9a7c</td><td><span class="sw" style="background:#f27d5f"></span>#f27d5f</td><td>Stage „Negotiation“, Overdue, negative Badges, Delete</td></tr>
+<tr><td><code>--ink</code> / <code>--on-ink</code></td><td>#f2f4f0 / #13171a</td><td>#13171a / #f6f7f3</td><td>Stage „Closing“ (dunkle Kachel), Pill-Hintergrund</td></tr>
+<tr><td><code>--good</code> / <code>--bad</code></td><td>#b8e65a / #ff9a7c</td><td>#3c7a14 / #b8401f</td><td>Trend-Texte, Health</td></tr>
+<tr><td><code>--dock</code> / <code>--pill</code></td><td>#16191980 / #585e5dbd</td><td>#ffffff8c / #13171a</td><td>Dock-Fläche / aktiver Tab</td></tr>
+<tr><td><code>--cream</code></td><td colspan="2">#f6f7f3</td><td>Rechnungs-Papier, helle Kachel</td></tr>
+</table>
+
+<h4>Avatar-Töne (4 Rotationen, in beiden Themes gleich)</h4>
+<p>
+<span class="av-demo" style="background:#e2efbd">t0</span>&nbsp;
+<span class="av-demo" style="background:#cde4f6">t1</span>&nbsp;
+<span class="av-demo" style="background:#f7d3c6">t2</span>&nbsp;
+<span class="av-demo" style="background:#e9e2cf">t3</span>&nbsp;
+<code>#e2efbd · #cde4f6 · #f7d3c6 · #e9e2cf</code>, Text immer #13171a, Initialen 700, Ring 2 px in Kartenfarbe beim Stapeln.</p>
+
+<h3>Effekte &amp; Formen</h3>
+<table>
+<tr><th>Token</th><th>Wert</th></tr>
+<tr><td><code>--blur</code></td><td><code>blur(22px) saturate(150%)</code> als <code>backdrop-filter</code> auf Tabs, Dock, Header-Buttons (Karten selbst haben <b>kein</b> Backdrop-Blur, nur Transparenz, das Foto ist bereits unscharf)</td></tr>
+<tr><td><code>--shadow</code></td><td>Dark: <code>inset 0 1px 0 #ffffff1f, 0 30px 60px -30px #0009</code> · Light: <code>inset 0 1px 0 #fffc, 0 24px 50px -32px #141e1466</code></td></tr>
+<tr><td><code>--shadow-pop</code></td><td>Dark: <code>0 24px 60px -18px #000000b3, 0 0 0 1px #ffffff1a</code> (Modal, Drawer, Popover, Toast)</td></tr>
+<tr><td><code>--wash</code></td><td>Vertikaler Verlauf über dem Foto: Dark <code>#080b0a80 → #080b0a6b 45% → #080b0a8c</code></td></tr>
+<tr><td>Scrim</td><td>Dark <code>rgba(0,0,0,.55)</code>, Light <code>rgba(12,18,14,.32)</code> hinter Modals</td></tr>
+<tr><td><code>--r-card</code> / <code>--r-tile</code> / <code>--r-ctl</code></td><td>22 px / 18 px / 999 px (alle Controls sind Pills oder Kreise)</td></tr>
+<tr><td>Modal / Drawer / Finder / Popover</td><td>26 px / 28 px / 24 px / 18 px Radius</td></tr>
+<tr><td><code>--gap</code> / <code>--gutter</code> / <code>--app-max</code></td><td>16 px / <code>clamp(16px,1.6vw,28px)</code> / 1840 px</td></tr>
+<tr><td><code>--dock-w</code> / <code>--dock-x</code></td><td>60 px breit, 20 px vom linken Rand (Content startet dahinter)</td></tr>
+<tr><td><code>--ease</code></td><td><code>cubic-bezier(.2,.8,.2,1)</code> für alle Transitions</td></tr>
+</table>
+
+<h3>Typografie (Urbanist, Fallback system-ui)</h3>
+<table>
+<tr><th>Rolle</th><th>Größe / Gewicht / Zeile / Spacing</th><th>Beispiel</th></tr>
+<tr><td>Body</td><td>14 px · 500 · 1.45</td><td>Fließtext, Listen</td></tr>
+<tr><td>Seitentitel (h1, 2-zeilig)</td><td>37.4 px · 600 · 1.04 · −0.025em (Mobile 28 px)</td><td>„Sales / Overview“, jede Zeile ein Wort, Zeichen einzeln animiert</td></tr>
+<tr><td>Große Zahl in Karte</td><td>42 px · 600 · 1.0 · −0.03em · <code>tabular-nums</code></td><td>$986,410</td></tr>
+<tr><td>KPI-Wert im Kopf</td><td>21 px · 600 · −0.01em</td><td>$100,040</td></tr>
+<tr><td>KPI-Label / Sublabel</td><td>12.5 px · 500 · muted</td><td>„Won this month“</td></tr>
+<tr><td>Kartentitel (h2)</td><td>15 px · 600</td><td>„Revenue“</td></tr>
+<tr><td>Kachel-Titel (h3)</td><td>15–16 px · 600</td><td>„Maintenance plan, 5 yr“</td></tr>
+<tr><td>Tab-Label</td><td>13.5 px · 600</td><td>Overview</td></tr>
+<tr><td>Button</td><td>12.5 px · 600</td><td>New deal</td></tr>
+<tr><td>Tabellen-Kopf / -Zelle</td><td>12 px 600 muted / 13.5 px 500</td><td>Deal · Customer</td></tr>
+<tr><td>Badge</td><td>11 px · 700</td><td>−2% vs last month</td></tr>
+<tr><td>Avatar xs</td><td>9 px · 700 (22 px Kreis)</td><td>IV</td></tr>
+<tr><td>Brand</td><td>21 px · 700, Mark 38 px Lime-Quadrat Radius 12</td><td>solvik</td></tr>
+</table>
+<p>Alle Beträge als <code>tabular-nums</code>. Kurzform ab 1.000: <code>$281.3K</code>; Vollform in Karten-Headlines: <code>$1,421,350</code>.</p>
+
+<!-- 03 -->
+<h2 id="s3">03 · Layout-Shell</h2>
+<div class="wire">┌──────────────────────────────────────────────────────────────────────────┐
+│ [■ solvik]        ( Overview | Pipeline | Customers | … | Projects )   (⌂)(🔔)(IV) │  header.top  grid: 99px | 1fr | 144px, gap 20, mb 26
+├──────────────────────────────────────────────────────────────────────────┤
+│ ╭──╮  Sales            (🏆 $100,040 −2%)  (📊 $1,421,350)  (◔ 65%)         [Aktionen] │  header.head: Titel 2-zeilig + 3 Stats + rechts Toolbar
+│ │🔍│  Overview                                                                │
+│ │＋│ ┌──────────────── card ────────────────┐ ┌────────── card ──────────┐  │  main.main: 12-Spalten-Grid, gap 16
+│ │★ │ │ head: Titel · Sub        [seg][…][↗] │ │                          │  │
+│ │📅│ │ body                                  │ │                          │  │
+│ │📞│ └───────────────────────────────────────┘ └──────────────────────────┘  │
+│ │✈ │                                                                         │
+│ │⤴ │                                                                         │  nav.dock: fixed links, 62px breit, vertikal zentriert,
+│ │⬆ │                                                                         │  Pill 999px, 8px Padding, 44px Kreis-Buttons, gap 4
+│ │──│                                                                         │  Tooltip rechts daneben (dock__tip)
+│ │⚙ │                                                                         │
+│ │☼ │                                                                         │
+│ ╰──╯                                                                         │
+└──────────────────────────────────────────────────────────────────────────┘</div>
+
+<h3>Header (<code>header.top</code>)</h3>
+<ul>
+  <li><b>Brand:</b> Lime-Quadrat 38 px mit Sonnen-Icon + Wortmarke 21 px/700. Link auf Overview.</li>
+  <li><b>Tabs:</b> Glas-Pill 50 px hoch, <code>backdrop-filter</code>. Aktiver Tab = „Ink-Pill“: eine geclippte Kopie aller Labels mit <code>clip-path: inset(4px R 4px L round 999px)</code>, deren linke und rechte Kante unabhängig animieren. Dadurch dehnt sich die Pill beim Wechsel, statt zu skalieren, und die Label-Farbe wechselt exakt an der Kante. <span class="pill-demo"><span class="on">Overview</span><span>Pipeline</span><span>Customers</span></span></li>
+  <li><b>Rechts:</b> zwei Glas-Icon-Buttons 40 px (Activity → Drawer, Notifications → Popover, 8-px-Coral-Punkt bei ungelesen) + Avatar-Button 44 px (Account-Menü).</li>
+  <li><b>Magnetic:</b> Header-Buttons tragen Klasse <code>magnetic</code>: folgen dem Cursor wenige Pixel (Pointer-Offset × 0.2).</li>
+</ul>
+
+<h3>Seitenkopf (<code>header.head</code>)</h3>
+<ul>
+  <li>Titel immer <b>zwei Wörter, zwei Zeilen</b> („Deal / Pipeline“, „Customer / Directory“). Buchstaben als <code>span.ch</code> gesplittet, Einflug gestaffelt beim Betreten.</li>
+  <li>Daneben <code>dl.head__stats</code>: 3 Stats, je 46-px-Kreis-Icon (well-Fläche, 1-px-Rim) + Wert 21 px + Label 12.5 px, optional Badge (Coral/Lime/Sky). Zahlen zählen beim Erscheinen hoch (<code>data-count</code>, <code>data-fmt="money|moneyShort|int|pct"</code>).</li>
+  <li>Rechts optional Toolbar (Suche, Filter-Chips, Segment-Switch, Primär-Button).</li>
+  <li>Auf Unterseiten (Kundenprofil): runder Back-Button 40 px links vom Titel.</li>
+</ul>
+
+<h3>Dock (<code>nav.dock</code>) – 10 Buttons</h3>
+<table>
+<tr><th>#</th><th>Icon</th><th>Aktion</th><th>Öffnet</th></tr>
+<tr><td>1</td><td>Lupe</td><td>Search <kbd>⌘K</kbd> / <kbd>/</kbd></td><td>Finder-Dialog (Command Palette)</td></tr>
+<tr><td>2</td><td>Plus</td><td>Create new <kbd>N</kbd></td><td>Menü: New task · New deal · New customer · New invoice · New project</td></tr>
+<tr><td>3</td><td>Stern</td><td>Favourite customers</td><td>Popover mit Favoriten-Liste (Avatar, Name, Firma) → Profil</td></tr>
+<tr><td>4</td><td>Kalender</td><td>Today's agenda</td><td>Popover: Datum, heutige Tasks mit Checkbox, „Open schedule“, „+ Add“</td></tr>
+<tr><td>5</td><td>Telefon</td><td>Log a call</td><td>Modal: Kunde, Dauer (min), Outcome (Connected/Left voicemail/No answer), Notizen</td></tr>
+<tr><td>6</td><td>Papierflieger</td><td>Compose email</td><td>Modal: To (Kunde), Subject, Message → „Logged on the customer's timeline“</td></tr>
+<tr><td>7</td><td>Share</td><td>Copy link to this page</td><td>Clipboard + Toast (Pill unten mittig, mit „Undo“-Slot)</td></tr>
+<tr><td>8</td><td>Upload</td><td>Export customers as CSV</td><td>Direkter CSV-Download</td></tr>
+<tr><td>9</td><td>…</td><td>More actions</td><td>Nur Mobile sichtbar; sammelt die ausgeblendeten Buttons</td></tr>
+<tr><td>—</td><td colspan="3">Separator (1 px Linie)</td></tr>
+<tr><td>10</td><td>Zahnrad</td><td>Settings (Link)</td><td><code>#/settings</code>, aktiv markiert mit Punkt rechts</td></tr>
+<tr><td>11</td><td>Sonne/Mond</td><td>Theme-Toggle</td><td>Dark ⇄ Light, Icons crossfaden, Label „Switch to light theme“</td></tr>
+</table>
+
+<!-- 04 -->
+<h2 id="s4">04 · Komponenten-Bibliothek</h2>
+<p>Klassen-Namen aus der Demo (BEM-artig) als Benennungs-Vorschlag. Insgesamt ~570 Klassen; die wichtigsten Familien:</p>
+
+<table>
+<tr><th>Komponente</th><th>Spezifikation</th></tr>
+<tr><td><b>card</b></td><td>Glas-Fläche, Padding 18 px, Radius 22, 1 px Rim, Inset-Glanz, Flex-Column. <code>card__head</code> (min-h 40, mb 14, Titel + <code>card__sub</code> + rechts <code>card__tools</code>) · <code>card__expand</code> = runder ↗-Button, öffnet die Karte als Fokus-Ansicht.</td></tr>
+<tr><td><b>tile</b> / <b>ov-tile</b></td><td>Kachel 18 px Radius, Padding 14/16, Tönung per Modifier <code>--sky --lime --coral --ink --plain</code> (Light: 73 % Deckkraft der Stage-Farbe, Dark: getönte Glasfläche). Aufbau: Datum oben links + ⋯ oben rechts, Titel, Firma, unten Betrag + Stage·% links und Avatar-Stapel rechts. <code>data-lift</code> = hebt sich beim Hover (translateY −2, Schatten).</td></tr>
+<tr><td><b>stat</b></td><td>Icon-Kreis 46 px + <code>stat__value</code> (b + optional badge) + <code>stat__label</code>.</td></tr>
+<tr><td><b>btn</b></td><td>Pill 34 px, Padding 0 14, 12.5/600. Varianten <code>btn</code> (Lime, Inset-Glanz, grüner Schatten) <span class="btn-demo">＋ New deal</span> · <code>btn--ghost</code> (well + rim) · <code>btn--ink</code> · <code>btn--danger</code> (Coral-Text, transparente Fläche) · <code>btn--sm</code>.</td></tr>
+<tr><td><b>ibtn</b></td><td>Icon-Button Kreis 40 px (sm 32, lg 44), well-Fläche, 1 px Rim; <code>ibtn--glass</code> mit Blur im Header.</td></tr>
+<tr><td><b>seg</b></td><td>Segment-Switch (6M | 12M, Board | List, Grid | Table, Month | Week, $ | %, Weighted | Total): Glas-Pill, gleitende <code>seg__pill</code> hinter aktivem Button.</td></tr>
+<tr><td><b>chip</b></td><td>Filter-Chip 36 px: Avatar links + Name (Owner-Filter) oder Punkt + Text (Typ-Filter: Calls/Meetings/Tasks/Emails). Aktiv = heller Hintergrund.</td></tr>
+<tr><td><b>badge</b></td><td>Pill 3/9 px, 11/700, <code>--coral --lime --sky --plain</code>.</td></tr>
+<tr><td><b>status</b></td><td>Pill mit Punkt + Text: draft (grau) · due (sky) · overdue (coral) · paid (lime) · active · review · done.</td></tr>
+<tr><td><b>av</b> / <b>av-stack</b></td><td>Avatar xs 22 / sm 28 / md 36 / xl 120 px; <code>av--t0…t3</code> Farbton nach Index. Stapel: negative Margin −7 px, 2-px-Ring in Kartenfarbe.</td></tr>
+<tr><td><b>meter</b></td><td>Fortschrittsbalken 6 px, Track well, Fill Lime oder Coral (Leaderboard, Quota, Health).</td></tr>
+<tr><td><b>ov-ring</b> / <b>pj-ring</b> / <b>pc__ring</b></td><td>SVG <code>viewBox 0 0 200 200</code>, Kreis r=84, Stroke 15, <code>stroke-linecap: round</code>, Track in well, Arc via <code>stroke-dasharray = 2πr</code> und <code>stroke-dashoffset = (1−p)·2πr</code>, animiert. Zahl in der Mitte 42 px.</td></tr>
+<tr><td><b>chart</b></td><td>SVG <code>viewBox 0 0 722 236</code>, Gruppen <code>chart__grid</code> (gestrichelte 1-px-Linien 3/4, Y-Labels), <code>chart__plot</code> (Area mit Vertikal-Gradient 22 %→0 %, Linie 2.5 px round, Target-Linie <code>is-dashed</code> in Ink), <code>chart__x</code> (Monats-Labels), <code>chart__cross</code> + <code>chart__dots</code> + <code>chart__tip</code> für Hover-Tooltip. Kurve ist Catmull-Rom → kubische Bézier.</td></tr>
+<tr><td><b>gcols</b></td><td>Gestapelte Säulen (Revenue by segment): Track pro Monat, Stücke <code>gcols__piece--sky/lime/coral/ink</code>, Tooltip.</td></tr>
+<tr><td><b>bars</b></td><td>Einfache Säulen (New customers per month), aktueller Monat Coral, Rest grau.</td></tr>
+<tr><td><b>donut</b></td><td>Lead-Sources-Ring mit 6 Segmenten, Mitte Zahl + Label, Legende 2-spaltig (Punkt, Name, n, %).</td></tr>
+<tr><td><b>spark</b></td><td>Mini-Linie 60×22 in Tabellen-Spalte „Trend“.</td></tr>
+<tr><td><b>fun</b></td><td>Stage-Funnel: 4 Pill-Reihen, nach unten schmaler werdend (100 % → 70 %), jede Reihe klickbar + Refresh-Icon, Werte Weighted/Total.</td></tr>
+<tr><td><b>table</b></td><td>Kopf 12/600 muted, Zellen 13.5/500, Zeilen-Border 1 px line, sortierbare Spaltenköpfe (Pfeil ▲▼), Zeilen heben beim Hover (well), Zeilen-Einflug gestaffelt. Person-Zelle = Avatar + Name + Sub.</td></tr>
+<tr><td><b>field</b> / <b>mform</b></td><td>Label 12.5 px muted über Input. Input/Select: min-h 44, Padding 10/14, Radius 14, well + 1 px Rim (18 %), Fokus = Lime-Rim. Grid 2-spaltig, <code>field--wide</code> volle Breite. Footer rechts: Cancel (ghost) + Primär.</td></tr>
+<tr><td><b>switch</b></td><td>Toggle 44×26, aktiv Lime, Knopf weiß, <code>role="switch" aria-checked</code>.</td></tr>
+<tr><td><b>modal</b></td><td><code>&lt;dialog&gt;</code> 560 px, opak (glass-3), Radius 26, Scrim 55 %, zentriert, Scale-In 0.96→1. Header: Titel 20 px + Sub + ✕-Kreis.</td></tr>
+<tr><td><b>drawer</b></td><td><code>&lt;dialog&gt;</code> 460 px rechts, volle Höhe mit 12-px-Abstand, Radius 28, Slide-In von rechts, ✕ oben rechts, Hintergrund blurred. Kopf = kleine Breadcrumb („Deal · Westbrook Schools Trust“).</td></tr>
+<tr><td><b>finder</b></td><td>Command-Palette 620 px, 120 px von oben, Suchfeld + <kbd>esc</kbd>, Gruppen PAGES / CUSTOMERS / DEALS / PROJECTS, Pfeiltasten + Enter.</td></tr>
+<tr><td><b>pop</b> / <b>pop--menu</b> / <b>pop--wide</b></td><td>Popover 18 px Radius, Padding 6, Schatten pop; Menü-Items 36 px Pills mit Icon (Open, Move to…, Mark won, Mark lost, Delete in Coral). Positioniert am Auslöser, schließt bei Klick außerhalb / Esc.</td></tr>
+<tr><td><b>toast</b></td><td>Pill unten mittig, 42 px, Icon + Text + optional „Undo“, 4 s, slide-up.</td></tr>
+<tr><td><b>empty</b></td><td>Leerzustand: Titel + Text zentriert, z. B. „Drop a deal here“.</td></tr>
+<tr><td><b>callbar</b></td><td>Schmale Leiste unten während eines laufenden Call-Timers (vorbereitet).</td></tr>
+</table>
+
+<!-- 05 -->
+<h2 id="s5">05 · View: Overview („Sales Overview“)</h2>
+<p><b>Kopf-Stats:</b> Won this month (+ Badge Δ vs. Vormonat) · Open pipeline · Win rate (closed deals).</p>
+<div class="wire">12-Spalten-Grid, gap 16
+┌─────────────── ov-rev (7) ───────────────┐ ┌──────── ov-hot (5) ────────┐
+│ Revenue       [6M|12M] (…) (↗)           │ │ Hot deals  by weighted (+)(↗)│
+│ $986,410 won in 12 months · 0 of 12 at target │ │ ┌tile┐ ┌tile┐              │
+│ ● Won revenue  - - Monthly target $156.7K│ │ ┌tile┐ ┌tile┐  2×3 Kacheln │
+│ [Area-Chart Coral, Target gestrichelt]   │ │ ┌tile┐ ┌tile┐              │
+└──────────────────────────────────────────┘ └────────────────────────────┘
+┌── ov-quota (3, lime-getönt) ──┐ ┌──── ov-mix (4) ────┐
+│ Team quota (…)                │ │ Stage mix        (↗)│
+│   ◯ 21% of Q4 quota           │ │ $1,421,350 open across 56 deals
+│ Won $100K Quota $470K Days 62 │ │ ▬▬▬ ▬▬▬ ▬▬▬ ▬▬▬ (4 Segmente, 44px, r12)
+│ [Needs $6K a day to land it]  │ │ ● Qualification 16 $281.3K 20% …
+└───────────────────────────────┘ └─────────────────────┘
+┌── ov-team (5) ──┐ ┌── ov-today (4) ──┐ ┌── ov-act (3) ──┐
+│ Team leaderboard│ │ Today   [+ Add]  │ │ Recent activity (⌂)(↗)
+│ Won this month ▾│ │ 0 of 3 done ▬▬▬  │ │ ● Inés moved … 6 min ago
+│ 1 IV Inés $74,520 ▬▬▬▬ 213%│ │ ☐ Send revised quote │ │ ● Kwame sent … 53 min ago
+│ 2 KA Kwame …     │ │   11:00 AM · Kestrel (✉)(IV)│ │ … 6 Einträge, Icon pro Typ
+│ …5 Reps          │ │ COMING UP  [Open schedule] │ │
+└─────────────────┘ │ Sun 1 Design review 9:30 AM │ └────────────────┘
+                    └──────────────────┘</div>
+<h3>Funktionen</h3>
+<ul>
+  <li><b>Revenue:</b> Segment 6M/12M; Menü „Revenue options“: Download 12 months (CSV) · Open growth report. Hover auf Chart zeigt Cross-Line, Punkt und Tooltip (Monat, Won, Target). Sub-Zeile zählt Monate über Target.</li>
+  <li><b>Hot deals:</b> Top 6 offene Deals nach gewichtetem Wert (Betrag × Stage-Wahrscheinlichkeit). Kachel-Klick → Deal-Drawer. ⋯-Menü: Open · Move to… (Submenü 4 Stages) · Mark won · Mark lost · Delete. „+“ → New-deal-Modal. ↗ → Pipeline.</li>
+  <li><b>Team quota:</b> Ring = Won / Quota des Quartals; Menü „Choose whose quota“: Whole team · jede Person (Ring, Zahlen und Pace-Satz rechnen um). Pace-Satz: (Quota − Won) / Resttage.</li>
+  <li><b>Stage mix:</b> 4-Segment-Balken proportional zum Wert; Legende mit Anzahl, Summe, Anteil. ↗ → Pipeline.</li>
+  <li><b>Leaderboard:</b> Rang, Avatar, Name, Betrag, Balken = % der Monats-Quota, Deals. Menü: Rank by won revenue · Rank by deals won · Export leaderboard (CSV).</li>
+  <li><b>Today:</b> heutige Tasks mit Checkbox (abhaken → Progress-Bar, Strike), Typ-Icon, Owner-Avatar; „+ Add“ öffnet New-task mit heutigem Datum. „Coming up“: nächste 3 Termine. „Open schedule“ → Schedule.</li>
+  <li><b>Recent activity:</b> letzte 6 Ereignisse (Typ-Icon rechts: Stage-Move, Mail, Call, Rechnung, Task, Won). Inbox-Icon → Activity-Drawer (vollständige Liste).</li>
+</ul>
+
+<!-- 06 -->
+<h2 id="s6">06 · View: Pipeline („Deal Pipeline“)</h2>
+<p><b>Kopf-Stats:</b> Open pipeline · Weighted forecast · Deals closing this month (+ Badge Summe).</p>
+<p><b>Toolbar:</b> Suchfeld „Search deals“ (Pill, Lupe) · Owner-Chips (5 Reps, Multi-Select, filtern Board und Liste) · rechts Segment Board | List · Export-Icon (CSV) · Primär „+ New deal“.</p>
+<div class="wire">pl-board: 4 Spalten à 285 px (grid) + rechts 2 Drop-Zonen
+┌ ● Qualification 16 (+) ┐ ┌ ● Proposal 11 (+) ┐ ┌ ● Negotiation 12 ┐ ┌ ● Closing 17 ┐ ┌ Won  ┐
+│ $281.3K                │ │ $263.6K          │ │ $364.3K          │ │ $512.2K      │ │ 🏆 4 this month · $100K
+│ ┌ pl-card sky ───────┐ │ │ ┌ lime ─────┐    │ │ ┌ coral ─────┐   │ │ ┌ ink ────┐ │ │ Drop to win
+│ │ Closes Dec 7    ⋯  │ │ │                 │ │                  │ │              │ ├──────┤
+│ │ Carport canopy     │ │ │ …               │ │ …                │ │ …            │ │ Lost │
+│ │ Kestrel Cold Storage│ │                   │ │                  │ │              │ │ ✕ 20 closed lost
+│ │ $12,290   (IV KA LB)│ │                   │ │                  │ │              │ │ Drop to lose
+│ └────────────────────┘ │ │                 │ │                  │ │              │ └──────┘
+│ … "Drop a deal here"   │ │                 │ │                  │ │              │
+└────────────────────────┘ └──────────────────┘ └──────────────────┘ └──────────────┘</div>
+<h3>Funktionen</h3>
+<ul>
+  <li><b>Spalten</b> = Stages mit Farbpunkt, Anzahl, Summe, „+“ (New deal vorbelegt mit dieser Stage). Spalte ist Glas-Karte (22 px), scrollt intern.</li>
+  <li><b>Karten</b> (<code>pl-card</code> + <code>pl-face pl-t--{stage}</code>): Datum, ⋯, Titel, Firma, Betrag, Avatar-Stapel. Tabindex 0, <code>aria-keyshortcuts="Enter Shift+ArrowLeft Shift+ArrowRight"</code>: Enter öffnet, Shift+Pfeil verschiebt eine Stage. Drag &amp; Drop per Pointer-Events (keine native Draggable-API): Karte hebt sich, Zielspalte leuchtet, Ablegen in „Won“/„Lost“ schließt den Deal.</li>
+  <li><b>Kartenmenü:</b> Open · Move to… · Mark won · Mark lost · Delete.</li>
+  <li><b>List-Ansicht</b> (<code>pl-listcard</code>): Tabelle „Deals · 56“, Toggle „Include won &amp; lost“, Spalten Deal · Customer (Avatar, Firma, Kontakt) · Stage (Status-Pill) · Amount · Close date (Default-Sort ▲) · Owner. Spaltenkopf klick = Sortierung. Ansicht wird in <code>localStorage["solvik:pipeline-view"]</code> gemerkt.</li>
+  <li><b>Weighted forecast</b> = Σ Betrag × Wahrscheinlichkeit (Qualification 20 %, Proposal 40 %, Negotiation 60–70 %, Closing 90 %).</li>
+</ul>
+<h3>Deal-Drawer (<code>#/pipeline/:id</code>)</h3>
+<div class="wire">Deal · Westbrook Schools Trust                              (✕)
+┌ Kachel in Stage-Farbe ───────────────────────────┐
+│ Closes Dec 11                        ● Closing   │
+│ Maintenance plan, 5 yr                           │
+│ Westbrook Schools Trust                          │
+│ $59,510                              (IV TH LB)  │
+└──────────────────────────────────────────────────┘
+[Qualification ▸ Proposal ▸ Negotiation ▸ Closing ▸ Won]   ← Chevron-Stepper, klickbar = Move to
+Amount (USD) [59510]        Expected close [11/12/2026]
+Owner [Inés Valdés ▾]
+Notes [Textarea „Wants one site live before committing the rest.“]
+Team  (IV Inés)(KA Kwame)(LB Lena)(AP Arjun)(TH Tove)   ← Toggle-Chips
+┌ SO Samuel Okoro · Head of Estates · Westbrook Schools Trust  ↗ ┐  ← Link zum Kundenprofil
+[🏆 Mark won]  [✕ Mark lost]                     [🗑 Delete]</div>
+<p>Alle Felder speichern sofort (ohne Save-Button). Mark won/lost schließt den Drawer, Toast mit Undo, Activity-Eintrag entsteht.</p>
+<h3>New-deal-Modal</h3>
+<p>„Starts in the pipeline at the stage you pick.“ Felder: Deal name (Placeholder „Annual renewal“) · Customer (Select, „Kontakt · Firma“) · Value (USD) · Stage (4) · Expected close (date) · Owner (5). Buttons Cancel / Create deal.</p>
+
+<!-- 07 -->
+<h2 id="s7">07 · View: Customers („Customer Directory“)</h2>
+<p><b>Kopf-Stats:</b> Customers in your book (+ Badge „+4 this week“) · Contacted in the last 7 days (+ Badge %) · Open pipeline across the book.</p>
+<p><b>Toolbar:</b> Suche „Search name, company, city…“ · Segment-Chips All | Enterprise | Mid-market | SMB · rechts Sort-Dropdown „Last contacted“ (Name · Open pipeline · Last contacted · Health) · Segment Grid | Table · Export · „+ New customer“.</p>
+<div class="wire">Grid: 4 Spalten, Karten (pc)
+┌──────────────────────────────┐
+│ (ME)                    (★)  │  ← Avatar md, Stern-Toggle = Favorit (gefüllt lime)
+│ Maren Eikeland               │
+│ Facilities Director · Kestrel Cold Storage
+│ ┌ Open pipeline │ Last contact ┐
+│ │ $211,210      │ 2 d ago      │   ← eingelassene Well-Box
+│ └───────────────┴──────────────┘
+│ ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬ 86      │  ← Health-Meter (lime ≥ 70, sky mittel, coral niedrig)
+│ [Enterprise]          (✉)(📞) │  ← Segment-Pill + Email/Call Icon-Buttons
+└──────────────────────────────┘</div>
+<p><b>Tabelle:</b> Customer (Avatar, Name, Rolle) · Company (Firma, Stadt) · Segment · Open pipeline · Health (Meter + Zahl) · Last contact · Owner.</p>
+<h3>New-customer-Modal</h3>
+<p>First name · Last name · Company · Role (Placeholder „Head of Operations“) · Email · Phone · Segment (Enterprise/Mid-market/SMB) · City. Buttons Cancel / Add customer.</p>
+
+<h3>Kundenprofil („Customer Information“, <code>#/customers/:slug</code>)</h3>
+<p>Eigene Seite mit Back-Button. <b>Kopf-Stats:</b> Won from N deals, all time (+ Badge Monat) · Open across N deals (+ Badge weighted) · Upcoming tasks, next 30 days (+ Badge heute).</p>
+<div class="wire">┌──────────── Interaction History (8) ─────────────┐ ┌──── Profil-Karte (4) ────┐
+│ (⋯ Filter and actions)(↗)                        │ │ (★)(⤴)            (⋯)(↗)  │
+│ Deal-Kacheln in Stage-Farbe, horizontal scrollbar,│ │      ◯ ME 86  ← Ring = Health
+│ 2 Reihen; Won-Kacheln ausgegraut mit ✓ Won       │ │  Maren Eikeland            │
+└──────────────────────────────────────────────────┘ │  Facilities Director, Kestrel Cold Storage
+┌── Tasks Schedule (4) ──┐ ┌── Stage Funnel (4) ──┐ │  [Enterprise] [📍 Bergen]  │
+│ ‹ October › (↻)        │ │ $125,703 Total        │ │ (✎)(✉)(📞)(＋)(📅)(🗓)     │
+│ Mo Tu We Th Fr Sa Su   │ │ [Weighted|Total]      │ │  Edit · Email · Call · New deal
+│ Monatsraster, Tage mit │ │ ( Qualification·1 $2,166 ↻ )│ │  · Schedule a meeting · Open team schedule
+│ Tasks farbig + Avatar  │ │ ( Proposal·2 $35,885 )  │ └────────────────────────┘
+└────────────────────────┘ │ ( Negotiation·1 )     │ ┌── Detailed Information (4) ──┐
+                           │ ( Closing·1 )         │ │ (✎ Edit all)(↗)              │
+                           └───────────────────────┘ │ 👤 First name  Maren      (✎) │
+                                                     │ 👤 Last name   Eikeland   (✎) │
+                                                     │ 🏢 Company                (✎) │
+                                                     │ ✉ Email  maren@…      (copy)  │
+                                                     │ 📞 Phone  +47 …       (call)  │
+                                                     │ ⌘ Sources  (WA)(Slack)(LI)(Discord)(Web) (✎)
+                                                     │ 🕒 Last contacted · 2 d ago  (↗ Log a call)
+                                                     └──────────────────────────────┘</div>
+<ul>
+  <li><b>Interaction History:</b> alle Deals des Kunden als Kacheln (offen farbig, Won gedimmt mit Häkchen), je mit ⋯-Menü. Menü „Filter and actions“.</li>
+  <li><b>Tasks Schedule:</b> Mini-Monatskalender, Tag-Klick zeigt Tasks des Tages / legt neuen an; „Back to this month“.</li>
+  <li><b>Stage Funnel:</b> 4 schmaler werdende Pills, Weighted/Total-Switch, Reihe-Klick filtert die History.</li>
+  <li><b>Profil-Karte:</b> Avatar 120 px mit Health-Ring + Zahl, Name, Rolle, Segment-Pill, Stadt-Pill, 6 runde Aktionen. Favoriten-Stern und Copy-Link oben links.</li>
+  <li><b>Detailed Information:</b> Inline-Edit pro Zeile (Stift) oder „Edit all details“ (Modal), Copy-Email, Call, Sources als Kanal-Icons (WhatsApp, Slack, LinkedIn, Discord, Web, Email), Last contacted mit Zeitstempel und Shortcut „Log a call“.</li>
+</ul>
+
+<!-- 08 -->
+<h2 id="s8">08 · View: Schedule („Team Schedule“)</h2>
+<p><b>Kopf-Stats:</b> Tasks today · This week · Overdue, unfinished.</p>
+<p><b>Toolbar:</b> Chips „Everyone“ + 5 Owner (Single-Select) · Typ-Chips Calls (coral) · Meetings (sky) · Tasks (lime) · Emails (plain), Multi-Select · rechts „+ New task“.</p>
+<div class="wire">┌────────────────── sch-calcard (9) ──────────────────┐ ┌──── sch-agenda (3) ────┐
+│ October 2026        ‹ [Today] ›  [Month|Week] (⋯)   │ │ Today            (+)   │
+│ Mon Tue Wed Thu Fri Sat Sun                          │ │ Saturday, Oct 31 · 0/3 done
+│ ┌28┐┌29┐┌30┐┌1┐ …  Zelle: Datum, Avatar-Punkte,      │ │ ☐ Send revised quote   │
+│ │  ││  ││  ││ │    bis 2 Chips „12:30p Share s…“,    │ │   11:00 AM ● Email      │
+│ └──┘└──┘└──┘└─┘    „+4 more“, Hover zeigt „+“ (Add) │ │   Kestrel Cold Storage (IV)(⋯)
+│ … heutiger Tag hell hervorgehoben (is-today)        │ │ ☐ Pipeline review …    │
+│ Woche: 7 Spalten × Stunden 8 AM–6 PM, Blöcke farbig │ │ ⚡ Overdue (10)         │
+│ nach Typ, „now“-Linie, Slot-Klick = Add at time     │ │ Roof survey · Yesterday 4:00 PM · Meeting · (AP)
+└──────────────────────────────────────────────────────┘ │ … +6 more — filter by teammate
+                                                         └────────────────────────┘</div>
+<ul>
+  <li><b>Monat:</b> 6 Reihen, Vor-/Nachmonatstage gedimmt (<code>day--pad</code>). Chips zeigen Zeit + Titel, erledigte durchgestrichen, überfällige <code>is-late</code>. Chip-Drag auf anderen Tag verschiebt (<code>aria-label</code>: „Drag to another day, or press Enter for options“).</li>
+  <li><b>Woche:</b> Zeitachse 8–18 Uhr, Blöcke positioniert nach Zeit, Farbe nach Typ (<code>sch-block--call/meeting/task/email</code>), Klick auf leeren Slot = New task mit Datum+Uhrzeit vorbelegt.</li>
+  <li><b>Navigation:</b> ‹ › Monat/Woche, „Today“ springt zurück; „Calendar options“-Menü (Export, Week starts on…).</li>
+  <li><b>Agenda rechts:</b> heutige Tasks mit Checkbox, Typ-Punkt, Kunde, Owner; „Overdue“-Sektion mit Zähler-Badge in Coral.</li>
+</ul>
+<h3>New-task-Modal</h3>
+<p>„Lands on the schedule and the customer's calendar.“ Title (Placeholder „Send revised proposal“) · Customer (Select, erste Option „Internal — no customer“) · Date · Time · Type (Task/Call/Meeting/Email) · Owner. Cancel / Add task.</p>
+
+<!-- 09 -->
+<h2 id="s9">09 · View: Finance („Revenue &amp; Invoices“)</h2>
+<p><b>Kopf-Stats:</b> Collected this month · Outstanding, not yet due · Overdue (+ Coral-Badge „8 late“).</p>
+<div class="wire">┌────────────── fin-cash (8) ──────────────┐ ┌──── fin-aging (4) ────┐
+│ Cash flow        [6M|12M] (⋯)(↗)          │ │ Aging          (⋯)(↗) │
+│ $372,900 collected in 6 months · 75% of $494.1K invoiced │ │ Unpaid invoices by age since issue
+│ [Area lime = Collected, gestrichelt = Invoiced] │ │ ▁▁ ▂▂ ▃▃ ██  4 Säulen (0–30, 31–60, 61–90, 90+ coral)
+│ ● Collected  - - Invoiced                 │ │ ● 0–30 days   1 invoice  $36,460
+└───────────────────────────────────────────┘ │ ● 31–60 days  1 invoice  $58,880 …
+┌──────────────────── fin-inv (12) ─────────────────────┐ └───────────────────────┘
+│ Invoices                      [+ New invoice] (⋯)(↗)  │
+│ [All|Draft|Due|Overdue|Paid]      (🔍 Number or customer) │
+│ 40 invoices · $998,510                                 │
+│ Invoice  Customer          Issued ▾  Due        Amount  Status    ⋯ │
+│ SV-3100  (ME) Kestrel…      Oct 31   Nov 30 in 29 d  $36,460 ● Due  ⋯ │
+│ SV-3137  (ME) Kestrel…      Oct 31   Nov 30 Not sent $3,600  ● Draft ⋯ │
+│ SV-3119  (RC) Atlântico…    Sep 27   Oct 26 5 d late $58,880 ● Overdue ⋯ │
+│ … 10 Zeilen                                 [Show all 40 ▾]         │
+└────────────────────────────────────────────────────────┘</div>
+<ul>
+  <li><b>Status-Logik:</b> Draft (nicht gesendet) → Due (gesendet, Fälligkeit offen, Sub „in N d“) → Overdue (Sub „N d late“, coral) → Paid (Sub „Paid Oct 31“).</li>
+  <li><b>Zeilenmenü:</b> Open invoice · Mark paid · Download.</li>
+  <li><b>Filter-Chips</b> + Suche kombinierbar, Zähler/Summe aktualisieren. Sortierbare Köpfe (Issued default ▾).</li>
+  <li><b>Aging:</b> Säulen klickbar → filtern Tabelle auf Bucket.</li>
+</ul>
+<h3>Rechnungs-Drawer (<code>#/finance/:id</code>)</h3>
+<div class="wire">Invoice SV-3139                                     (✕)
+[● Draft] Ibuki Precision  $5,300
+┌──────── Papier (cream, Radius 18, dunkler Text) ────────┐
+│ ■ northlight                      INVOICE  SV-3139      │
+│ FROM Northlight Solar Co. · Adresse · billing@…         │
+│ BILL TO Ibuki Precision · Hana Sato · Nagoya · hana@…   │
+│ Issued Draft   Due Nov 30, 2026   Terms Net 30          │
+│ Description                         Qty   Amount        │
+│ Ground mount, 1.2 MW                1     $5,300        │
+│ Deal D15 · Jan 10, 2027                                 │
+│                         Subtotal $5,300 · Tax (reverse charge) $0
+│                         Total due  $5,300               │
+│ Please pay by … to IBAN …, quoting SV-3139.             │
+└─────────────────────────────────────────────────────────┘
+[✈ Send invoice] [⬇ Download] [⤴ Copy link]
+[🗑 Delete draft]</div>
+<p>„New invoice“ legt sofort einen Draft (nächste Nummer, aus einem Deal des Kunden) an und öffnet ihn. Send → Status Due, Activity-Eintrag, Notification.</p>
+
+<!-- 10 -->
+<h2 id="s10">10 · View: Growth („Growth Reports“)</h2>
+<p><b>Kopf-Stats:</b> New customers, last 6 months · Average won deal · Average sales cycle, days. <b>Rechts:</b> Segment 3M | 6M | 12M (steuert alle Karten) + „Export CSV“ (Primär).</p>
+<table>
+<tr><th>Karte</th><th>Inhalt</th><th>Interaktion</th></tr>
+<tr><td>Revenue by segment (8)</td><td>Headline Σ won, 3 Chips Enterprise/Mid-market/SMB mit Werten, gestapelte Säulen pro Monat (lime/coral/sky)</td><td>$ | % Switch, Chip-Klick isoliert Segment, Tooltip</td></tr>
+<tr><td>Lead sources (4)</td><td>Donut 6 Segmente (Website, WhatsApp, Slack, Discord, LinkedIn, Email), Mitte „15 new customers“, Legende n + %</td><td>Legende-Klick hebt Segment</td></tr>
+<tr><td>New customers per month (4)</td><td>Säulen, aktueller Monat coral</td><td>↗ Customers</td></tr>
+<tr><td>Win rate trend (8)</td><td>Headline „68 % · 19 won of 28 closed“, Linie lime mit Area, Periodendurchschnitt gestrichelt</td><td>Hover-Tooltip</td></tr>
+<tr><td>Top customers by revenue won (7)</td><td>Tabelle Customer · Segment · Deals · Revenue · Trend (Sparkline)</td><td>Sortierbar, Zeile → Profil</td></tr>
+<tr><td>Rep performance (5)</td><td>Rep (Avatar, Name, „99 % of 6-month quota“ + Meter) · Won · Deals · Win rate</td><td>↗ Settings/Team</td></tr>
+</table>
+
+<!-- 11 -->
+<h2 id="s11">11 · View: Projects („Customer Projects“)</h2>
+<p><b>Kopf-Stats:</b> Active projects · Steps complete overall (%) · Due in the next 14 days. <b>Toolbar:</b> Status-Chips All | Planning | In progress | In review | Done · Suche · „+ New project“.</p>
+<div class="wire">Grid 4 Spalten, pj-card
+┌───────────────────────────────┐
+│ (WZ) Harbourline Hotels   [● In progress]
+│      Wen Zhao                 │
+│ Monitoring rollout            │  ← Titel 17 px
+│ ┌ ◯ 12%  1 of 5 steps ───────┐│  ← Well-Box: Ring md + Text + Mini-Meter
+│ │        Next: Structural check ││
+│ └──────────────────────────────┘│
+│ 🕒 Due in 7 days      (AP IV TH)│  ← Done: „Delivered · Oct 15“
+└───────────────────────────────┘</div>
+<p>Ring-Farbe nach Fortschritt/Status: sky (Planning/früh), lime (In progress/fortgeschritten), good (Done). Done-Karten gedimmt.</p>
+<h3>Projekt-Drawer (<code>#/projects/:id</code>)</h3>
+<div class="wire">Project · Harbourline Hotels                      (✕)
+┌ Kachel sky ───────────────────────────────────┐
+│ Due in 7 days                   [In progress] │
+│ Monitoring rollout            ◯ 16%           │
+│ Harbourline Hotels · Wen Zhao                 │
+│ 1 of 5 steps done                 (AP IV TH)  │
+└───────────────────────────────────────────────┘
+Status [In progress ▾]        Due date [07/11/2026]
+Checklist                                   1/5
+▬▬▬▬▬▬▬▬▬▬ (Meter)
+☑ Scope sign-off        (✕ Remove)
+☐ Structural check
+☐ Install · ☐ Inspection · ☐ Handover
+[Add a step…                       ] [+ Add]
+[In review] [Mark done]            ← Quick-Status
+Team (IV Inés)(KA Kwame)(LB Lena)(AP Arjun)(TH Tove)
+┌ WZ Wen Zhao · Sustainability Lead · Harbourline Hotels ↗ ┐
+[🗑 Delete project]</div>
+
+<!-- 12 -->
+<h2 id="s12">12 · View: Settings („Workspace Settings“)</h2>
+<p><b>Kopf-Stats:</b> Team members · Alerts switched on · KB saved in this browser.</p>
+<div class="wire">┌── set-me (3) ──────────┐ ┌──────────── set-main (9) ────────────┐
+│      ◯ IV (120px, lime-Punkt)│ │ ( 👤 Profile | 👥 Team | 🔔 Notifications | ☼ Appearance | 🗄 Data )
+│   Inés Valdés          │ │                                      │
+│   Account Executive    │ │ Profile — How you appear to the team…│
+│ [✉ ines@northlightsolar.com] │ │ Full name [ ]        Email [ ]        │
+│ ┌ Q4 quota 71% ──────┐ │ │ Role [Select 5 Rollen]  Annual quota (USD) [420000]
+│ │ ▬▬▬▬▬▬▬▬▬ $74,520 of $105K │ │ „A quarter of it is your quota ring on the overview.“
+│ └────────────────────┘ │ │                    [Discard] [Save changes]
+│ Open deals 20 · Customers 8 · Due this week 4 │ └──────────────────────────────────────┘
+│ ┌ Next close ▸ Ground mount, 1.2 MW · Dunecrest · $9,950 ┐
+└────────────────────────┘</div>
+<table>
+<tr><th>Tab</th><th>Inhalt</th></tr>
+<tr><td>Profile</td><td>Full name, Email, Role (Account Executive · Sales Engineer · Customer Success · Sales Development Rep · Head of Sales), Annual quota. Discard/Save (Save erst aktiv bei Änderung).</td></tr>
+<tr><td>Team</td><td>„5 people · quota attainment for Q4“, Button „Invite teammate“. Zeilen: Avatar, Name (+ „You“-Badge), Rolle, Meter + „71 % · $74.5K of $105K“, ⋯ Options.</td></tr>
+<tr><td>Notifications</td><td>„Saved as soon as you flip them.“ 4 Switches: Deal updates · Task reminders (15 min vorher) · Invoice activity · Weekly digest.</td></tr>
+<tr><td>Appearance</td><td>Theme: Light | Dark | System (Segment, <code>aria-pressed</code>) · Week starts on: Monday | Sunday · Stage-Farblegende (Qualification sky, Proposal lime, Negotiation coral, Closing ink) mit Hinweis „Stage colours are the legend everywhere“.</td></tr>
+<tr><td>Data</td><td>„Everything lives in this browser — export it any time.“ Customers → Export CSV · Deals → Export CSV · Full backup → Download JSON (60 KB) · Danger-Zone (coral-gestrichelt): Reset demo data.</td></tr>
+</table>
+
+<!-- 13 -->
+<h2 id="s13">13 · Globale Funktionen</h2>
+<h3>Suche / Command Palette (<kbd>⌘K</kbd>, <kbd>/</kbd>)</h3>
+<ul>
+  <li>Leer: Gruppe PAGES (4 Einträge „Go to page“) + CUSTOMERS (5 zuletzt kontaktierte).</li>
+  <li>Mit Eingabe: Fuzzy über Kunden (Name, Firma, Rolle), Deals (Titel, Firma, Stage), Projekte, Seiten. Treffer-Zeile: Icon/Avatar, Titel, Sub, Chevron. Enter öffnet, Pfeile navigieren, Esc schließt.</li>
+</ul>
+<h3>Tastatur-Shortcuts (Drawer „Keyboard shortcuts“, <kbd>?</kbd>)</h3>
+<table>
+<tr><th>Aktion</th><th>Taste</th></tr>
+<tr><td>Search</td><td><kbd>⌘ K</kbd> oder <kbd>/</kbd></td></tr>
+<tr><td>Create…</td><td><kbd>N</kbd></td></tr>
+<tr><td>New task</td><td><kbd>T</kbd></td></tr>
+<tr><td>Go to a page</td><td><kbd>G</kbd> dann <kbd>O</kbd> / <kbd>P</kbd> / <kbd>C</kbd> / <kbd>S</kbd> / <kbd>F</kbd> / <kbd>R</kbd> / <kbd>J</kbd></td></tr>
+<tr><td>Close</td><td><kbd>Esc</kbd></td></tr>
+<tr><td>Diese Liste</td><td><kbd>?</kbd></td></tr>
+<tr><td>Pipeline-Karte</td><td><kbd>Enter</kbd> öffnen · <kbd>Shift</kbd>+<kbd>←</kbd>/<kbd>→</kbd> Stage wechseln</td></tr>
+</table>
+<h3>Header-Menüs</h3>
+<ul>
+  <li><b>Activity-Drawer:</b> „Everything the team did, newest first.“ Liste Avatar + Satz (Name fett, Kunde als Link) + Zeit.</li>
+  <li><b>Notifications-Popover (wide):</b> Titel + „Mark all read“, 3 Einträge mit Zeit, ungelesen = Punkt; Klick führt zum Objekt (Kunde, Rechnung, Deal).</li>
+  <li><b>Account-Menü:</b> Settings · Keyboard shortcuts · Theme Light / Dark / Match system (Häkchen am aktiven) · Reset demo data.</li>
+</ul>
+<h3>Toasts</h3>
+<p>Pill unten mittig, für: Link kopiert, Deal verschoben/gewonnen/verloren (mit Undo), Task erledigt, Rechnung gesendet/bezahlt, Export gestartet, Fehler („Couldn't reach the clipboard — select and copy instead“).</p>
+
+<!-- 14 -->
+<h2 id="s14">14 · Datenmodell</h2>
+<pre><code>Team        { id, name, initials, role, tone(0-3), email, quotaAnnual, isMe }
+Customer    { id(slug), first, last, company, role, email, phone, city,
+              segment: "Enterprise"|"Mid-market"|"SMB", health 0-100,
+              ownerId, sources: ["web","whatsapp","slack","discord","linkedin","email"],
+              favourite: bool, lastContactAt, createdAt }
+Deal        { id, title, customerId, amount, stage: "qualify"|"proposal"|"negotiate"|"closing",
+              status: "open"|"won"|"lost", closeDate, ownerId, teamIds[], notes,
+              probability (aus stage), createdAt, wonAt?, lostAt? }
+Task        { id, title, customerId|null, date, time, kind: "task"|"call"|"meeting"|"email",
+              ownerId, done: bool }
+Invoice     { id, number "SV-3100", customerId, dealId?, issuedAt|null, dueAt, amount,
+              status: "draft"|"due"|"overdue"|"paid", paidAt?, terms "Net 30", lines[{desc,qty,amount}] }
+Project     { id, name, customerId, status: "planning"|"progress"|"review"|"done",
+              dueAt, deliveredAt?, steps[{title, done}], teamIds[] }
+Activity    { id, actorId, verb, objectType, objectId, customerId, at }
+Notification{ id, text, href, at, read }
+Settings    { theme: "light"|"dark"|"system", weekStart: "mon"|"sun",
+              alerts: {deals, tasks, invoices, digest}, pipelineView: "board"|"list" }</code></pre>
+<h3>Abgeleitete Kennzahlen (Formeln)</h3>
+<table>
+<tr><th>KPI</th><th>Formel</th></tr>
+<tr><td>Won this month</td><td>Σ amount, status=won, wonAt im Monat; Badge = Δ zu Vormonat in %</td></tr>
+<tr><td>Open pipeline</td><td>Σ amount, status=open</td></tr>
+<tr><td>Weighted forecast</td><td>Σ amount × probability(stage)</td></tr>
+<tr><td>Win rate</td><td>won / (won + lost) im Zeitraum</td></tr>
+<tr><td>Quota %</td><td>Won im Quartal / (quotaAnnual / 4); Pace = (Quota − Won) / Resttage</td></tr>
+<tr><td>Hot deals</td><td>Top 6 open nach amount × probability</td></tr>
+<tr><td>Health</td><td>Score aus Recency des Kontakts, offenen Tasks, Deal-Bewegung (0–100)</td></tr>
+<tr><td>Aging-Bucket</td><td>Tage seit issuedAt: 0–30 / 31–60 / 61–90 / 90+ für status ≠ paid</td></tr>
+<tr><td>Collected</td><td>Σ amount paid im Monat; „75 % of invoiced“ = collected / issued</td></tr>
+<tr><td>Avg. sales cycle</td><td>Ø (wonAt − createdAt) in Tagen</td></tr>
+<tr><td>Project %</td><td>done steps / steps</td></tr>
+</table>
+<p>Persistenz in der Demo: ein JSON-Blob im <code>localStorage</code> (Key-Präfix <code>solvik:</code>), Export als CSV/JSON, „Reset“ lädt Seed-Daten. Für RealRise: gleiche Schemas als Supabase-Tabellen (siehe Abschnitt 16).</p>
+
+<!-- 15 -->
+<h2 id="s15">15 · Interaktion, Motion, Responsive, Accessibility</h2>
+<h3>Motion-Regeln (alle mit <code>--ease</code>)</h3>
+<ul>
+  <li><b>View-Wechsel:</b> alte View fade-out, neue View: Titel-Buchstaben steigen gestaffelt auf (ca. 20 ms Versatz), Stats zählen hoch (600–900 ms), Karten erscheinen nacheinander (translateY 12 → 0, opacity, ~60 ms Stagger). Tabellenzeilen ebenfalls gestaffelt.</li>
+  <li><b>Charts:</b> Linie zeichnet sich (stroke-dashoffset), Area blendet nach, Ringe drehen von 0 auf Wert, Säulen wachsen von unten.</li>
+  <li><b>Backdrop-Parallax:</b> Foto bewegt sich minimal mit Maus/Scroll (Transform um ±0.5 %, Scale 1.0002), dadurch Tiefe.</li>
+  <li><b>Hover:</b> Kacheln mit <code>data-lift</code> heben 2 px, Schatten wächst; Icon-Buttons hellen auf; Header-Buttons sind „magnetic“.</li>
+  <li><b>Overlays:</b> Modal scale 0.96→1 + fade 180 ms; Drawer slide 24 px von rechts 240 ms; Popover scale 0.98 vom Anker; Toast slide-up.</li>
+  <li><b>Tab-Pill:</b> clip-path-Kanten animieren getrennt (linke Kante schneller beim Vorwärts-Wechsel, rechte beim Rückwärts).</li>
+  <li><code>prefers-reduced-motion</code>: alle Stagger/Parallax aus, nur Opacity.</li>
+</ul>
+<h3>Breakpoints (aus den Media-Queries)</h3>
+<table>
+<tr><th>Breite</th><th>Verhalten</th></tr>
+<tr><td>&gt; 1180 px</td><td>Volles Layout, Dock links, 12-Spalten-Grid, Board 4 Spalten + Drop-Zonen</td></tr>
+<tr><td>≤ 1180 px</td><td>Grid 6 Spalten (Karten 2-spaltig), Board horizontal scrollbar, Profil-Seite 2-spaltig</td></tr>
+<tr><td>≤ 760 px</td><td>Header 2-zeilig: Brand + Icons oben, Tabs darunter als sticky horizontale Scroll-Leiste; Dock wird <b>Bottom-Bar</b> (fixed, 346×58, 7 Buttons: Search, Create, Today, Compose, More, Settings, Theme); alle Karten 1-spaltig; Drawer wird Bottom-Sheet; h1 28 px; Stats untereinander</td></tr>
+<tr><td>≤ 480 / 374 px</td><td>Kleinere Paddings, Kachel-Grid 1-spaltig, Toolbar umbricht</td></tr>
+<tr><td>Höhe ≤ 560 (Desktop)</td><td>Dock kompakter</td></tr>
+<tr><td><code>(hover: none)</code> / <code>(pointer: coarse)</code></td><td>Tooltips aus, Hit-Areas 44 px, Drag mit Long-Press</td></tr>
+</table>
+<h3>Accessibility (in der Demo konsequent)</h3>
+<ul>
+  <li>Skip-Link „Skip to content“, Landmarks <code>header / nav / main / section</code>, <code>aria-current="page"</code> am Tab.</li>
+  <li>Jeder Icon-Button hat <code>aria-label</code>; Menüs <code>aria-haspopup</code> + <code>aria-expanded</code>; Popover <code>role="dialog"</code>, Menü <code>role="menu"</code>.</li>
+  <li>Ringe/Charts: <code>role="img"</code> mit sprechendem <code>aria-label</code> („21 % of Q4 quota: $100,040 won of $470,000“).</li>
+  <li>Kalender-Tage als Buttons mit Datum + Taskanzahl im Label; Karten mit <code>aria-keyshortcuts</code>.</li>
+  <li>Native <code>&lt;dialog&gt;</code> für Modal/Drawer/Finder (Fokus-Trap, Esc gratis); Toast <code>role="status"</code>.</li>
+  <li>Kontrast: Lime nie als Text auf hell (dafür <code>--accent-text</code> dunkelgrün im Light-Theme).</li>
+</ul>
+
+<!-- 16 -->
+<h2 id="s16">16 · Bau-Reihenfolge &amp; RealRise-Mapping</h2>
+<h3>Empfohlener Stack</h3>
+<p>Next.js (App Router) + TypeScript + CSS-Variablen (kein Tailwind nötig, das Design lebt von Tokens) + Supabase (Auth, Postgres, Realtime) + eigene SVG-Charts (klein, stilsicher) oder <code>visx</code>. Alternativ 1:1 wie die Demo als Vanilla-SPA, wenn es zuerst ein Prototyp mit localStorage sein soll.</p>
+<ol>
+  <li><b>Tokens &amp; Shell (Tag 1–2):</b> <code>tokens.css</code> mit allen Variablen aus Abschnitt 2 (dark + light), Backdrop-Foto + Wash + Scrim, Header mit Tab-Pill, Dock, 12-Grid, Card-Basis. Theme-Toggle + System-Modus.</li>
+  <li><b>Komponenten (Tag 3–4):</b> btn, ibtn, seg, chip, badge, status, av/av-stack, meter, ring, field/mform, modal, drawer, pop/menu, toast, table, empty. Storybook oder eine <code>/kit</code>-Seite.</li>
+  <li><b>Datenlayer (Tag 5):</b> Schemas aus Abschnitt 14 als Supabase-Tabellen + RLS; Seed-Skript mit realistischen Demo-Daten; Store mit abgeleiteten KPIs (Abschnitt 14).</li>
+  <li><b>Views in dieser Reihenfolge:</b> Pipeline (Board + Drawer + DnD) → Customers (Grid/Table/Profil) → Schedule → Overview (braucht alle Daten) → Finance → Projects → Growth → Settings.</li>
+  <li><b>Globales:</b> Command Palette, Shortcuts, Activity-Log (Trigger bei jeder Mutation), Notifications, CSV/JSON-Export.</li>
+  <li><b>Motion-Pass:</b> Stagger, Count-Up, Chart-Draw, Pill-Clip, Parallax, reduced-motion.</li>
+  <li><b>Responsive-Pass:</b> 1180 / 760 / 480 Breakpoints, Bottom-Dock, Bottom-Sheet-Drawer.</li>
+</ol>
+
+<h3>Mapping auf RealRise</h3>
+<table>
+<tr><th>Solvik</th><th>RealRise-Version</th></tr>
+<tr><td>Stages Qualification · Proposal · Negotiation · Closing</td><td>Lead · Erstgespräch gebucht · Erstgespräch gehalten · Angebot · Closing (Won = Kunde P1/P2/P3, Lost = passt-nicht)</td></tr>
+<tr><td>Segmente Enterprise / Mid-market / SMB</td><td>B2B / B2C / Anderes (aus bestehendem Auto-Tag)</td></tr>
+<tr><td>Owner-Chips (5 Reps)</td><td>Setter (David, Chris) · Closer (Dani, Robert) via <code>closer-&lt;name&gt;</code>-Tags</td></tr>
+<tr><td>Lead sources Website/WhatsApp/Slack/Discord/LinkedIn/Email</td><td>Meta Ads (Instant Form) · Webinar · Organic IG · WhatsApp-Channel · Affiliate (<code>aff:&lt;kürzel&gt;</code>) · Empfehlung</td></tr>
+<tr><td>Schedule Calls/Meetings/Tasks/Emails</td><td>Setter-Calls (Powerdialer) · Erstgespräche (GHL-Kalender) · Webinar Mi 19:00 · Live-Sessions Mo+Do</td></tr>
+<tr><td>Finance Invoices</td><td>ablefy-Zahlungen + Raten (Rate 1–24), Dunning-Stufen statt Aging-Buckets, Provisionen (Setter 5 %, Affiliate 30/25/20, Closer 10 %)</td></tr>
+<tr><td>Projects + Checklist</td><td>Onboarding-Pipeline pro Kunde: Zugang, Setup-Call, Claude-Setup-Checkliste, 2-von-4-Verifizierung, Phase-Upgrade</td></tr>
+<tr><td>Growth</td><td>CPL pro Hook, Webinar-Quote (Registriert → Teilgenommen → Gebucht), Affiliate-Umsatz</td></tr>
+<tr><td>Quota-Ring</td><td>100k-€/Monat-North-Star, Ring pro Closer</td></tr>
+<tr><td>Brand Lime #c4ef4f / Urbanist</td><td>Entscheidung offen: RealRise-Coral #d97757 + SF/Inter (Apple-White-System) oder Lime behalten. Beide funktionieren mit dem Token-Setup, nur <code>--accent</code>, <code>--accent-text</code>, <code>--lime</code> tauschen.</td></tr>
+</table>
+<div class="note ok">Datenquelle für die RealRise-Version: GHL-API (read) ist bereits angebunden (Kontakte, Tags, Opportunities, Conversations). Das CRM kann zuerst als <b>Read-Dashboard über GHL</b> starten und Schreibpfade (Stage-Move, Tasks, Notizen) später ergänzen.</div>
+
+<p style="margin-top:60px;color:var(--faint);font-size:12.5px">Erstellt am 31.10.2026 aus einem vollständigen Browser-Audit der Solvik-Demo. Werte gemessen per Computed-Styles; Texte und Strukturen 1:1 aus dem DOM. Datei: <code>_konzepte/crm-bauplan-solvik.html</code></p>
+
+</div>
+</body>
+</html>
